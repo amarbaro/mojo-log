@@ -10,7 +10,9 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p .work/fx
 M=.venv/bin/mojo; N=${N:-3000}; O="python3 -I tools/oracle.py"
-cap() { systemd-run --user --scope -q -p MemoryMax=4G -p MemorySwapMax=0 timeout 60 "$@"; }
+if systemd-run --user --scope -q true 2>/dev/null; then  # no user systemd (CI containers): run uncapped
+  cap() { systemd-run --user --scope -q -p MemoryMax=4G -p MemorySwapMax=0 timeout 60 "$@"; }
+else cap() { timeout 60 "$@"; }; fi
 build() { cap $M build -I src "tests/$1.mojo" -o ".work/$1" 2>.work/build.err || { echo "FAIL build: tests/$1.mojo"; cat .work/build.err; exit 1; }; }
 for t in cases alloc api journal; do build $t; done
 cc -shared -fPIC -O1 -o .work/allocs.so tools/allocs.c -ldl || { echo "FAIL build: tools/allocs.c"; exit 1; }
