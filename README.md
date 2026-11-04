@@ -1,5 +1,9 @@
 # mojo-log
 
+<!-- badges -->
+[![ci](https://github.com/amarbaro/mojo-log/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/amarbaro/mojo-log/actions/workflows/ci.yml) [![latest release](https://img.shields.io/github/v/release/amarbaro/mojo-log)](https://github.com/amarbaro/mojo-log/releases/latest) [![license](https://img.shields.io/github/license/amarbaro/mojo-log)](https://github.com/amarbaro/mojo-log/blob/main/LICENSE) [![checks](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/amarbaro/mojo-log/badges/checks.json)](https://github.com/amarbaro/mojo-log/actions/workflows/ci.yml)
+<!-- /badges -->
+
 <!-- install -->
 Install: `pixi add mojo-log` once published. For now: `git clone https://github.com/amarbaro/mojo-log`, then `mojo run -I mojo-log/src app.mojo`.
 
