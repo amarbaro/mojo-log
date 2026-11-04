@@ -42,9 +42,9 @@ echo "api: $(grep -o 'Summary.*' .work/api.log | head -1)"
 cap $M run -I src examples/quickstart.mojo 2>.work/ex.out >/dev/null || { echo "FAIL example: examples/quickstart.mojo"; cat .work/ex.out; exit 1; }
 python3 -I - .work/ex.out <<'PY' || { echo "FAIL example: quickstart output is not the two records the README shows"; exit 1; }
 import json, sys
-a, b = [json.loads(l) for l in open(sys.argv[1])]
+a, b = [json.loads(l) for l in open(sys.argv[1]) if l.startswith("{")]  # mojo may print a crashpad warning first
 assert a["level"] == "info" and a["msg"] == "request done" and list(a)[3:] == ["path", "ms", "n", "ok"] and a["ms"] == 12.5 and a["ok"] is True
-assert b["level"] == "error" and b["i"] == 2 and len(open(sys.argv[1]).readlines()) == 2
+assert b["level"] == "error" and b["i"] == 2 and sum(l.startswith("{") for l in open(sys.argv[1])) == 2
 PY
 echo "example: examples/quickstart.mojo prints the records the README shows"
 tok=t$$-$N; out=$(cap .work/journal "$tok") || { echo "FAIL journal: crashed"; exit 1; }
