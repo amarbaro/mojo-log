@@ -1,5 +1,27 @@
 # mojo-log
 
+<!-- install -->
+Install: `pixi add mojo-log` once published. For now: `git clone https://github.com/amarbaro/mojo-log`, then `mojo run -I mojo-log/src app.mojo`.
+
+```mojo
+from mlog import Logger, Field, INFO
+
+def main() raises:
+    var log = Logger(INFO, True)        # JSON lines on stderr; Logger(INFO, False, "app.log") appends text to a file
+    log.info("request done", Field("path", "/api/v1/items"), Field("ms", 12.5), Field("n", 3), Field("ok", True))
+    log.debug("below INFO: costs one compare, writes nothing")
+    log.begin(4, "any number of fields")  # begin / field / end for a field list built at run time
+    for i in range(3):
+        log.field(Field("i", i))
+    log.end()
+```
+
+| 1M records | mojo ms | python ms | peak RSS mojo / python |
+|---|---|---|---|
+| JSON lines | 929, 860, 841 | 4867, 4865, 5192 | 11 MB / 12 MB |
+Baselines and method: [docs/perf.md](docs/perf.md)
+<!-- /install -->
+
 Structured logging for Mojo: levels, `key=value` fields, text or JSON-lines, stderr, file and
 journald sinks. 358 lines. A disabled call costs one compare (3 ns); an enabled call allocates
 nothing after the first line (gated: 1M calls add 0 allocations). JSON lines are byte-identical to
