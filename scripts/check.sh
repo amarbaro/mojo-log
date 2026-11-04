@@ -38,7 +38,7 @@ a=$(allocs leaky 10); b=$(allocs leaky 100000)
 (( b > a + 99000 )) || { echo "FAIL control: counter did not move on the leaky run ($a -> $b)"; exit 1; }
 echo "alloc: 1M disabled and 1M enabled calls add 0 allocations (control: leaky $a -> $b)"
 cap $M run -I src tests/api.mojo >.work/api.log 2>&1 || { echo "FAIL api: tests/api.mojo"; cat .work/api.log; exit 1; }
-echo "api: $(grep -o 'Summary.*' .work/api.log | head -1)"
+echo "api: $(grep -ao 'Summary.*' .work/api.log | head -1)"
 cap $M run -I src examples/quickstart.mojo 2>.work/ex.out >/dev/null || { echo "FAIL example: examples/quickstart.mojo"; cat .work/ex.out; exit 1; }
 python3 -I - .work/ex.out <<'PY' || { echo "FAIL example: quickstart output is not the two records the README shows"; exit 1; }
 import json, sys
@@ -48,7 +48,8 @@ assert b["level"] == "error" and b["i"] == 2 and sum(l.startswith("{") for l in 
 PY
 echo "example: examples/quickstart.mojo prints the records the README shows"
 tok=t$$-$N; out=$(cap .work/journal "$tok") || { echo "FAIL journal: crashed"; exit 1; }
-if [[ $out == "journal: yes" ]]; then
+if [[ $out == "journal: yes" ]] && ! command -v journalctl >/dev/null; then echo "journal: sent, no journalctl to read it back (CI container), skipped"
+elif [[ $out == "journal: yes" ]]; then
   sleep 1; j=$(journalctl --since -2min -o cat "MLOG_TOKEN=$tok" 2>/dev/null | head -1)
   [[ $j == "mlog journald test" ]] || { echo "FAIL journal: sent, not found in journalctl ('$j')"; exit 1; }
   echo "journal: record found in journald"
