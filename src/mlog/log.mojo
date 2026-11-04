@@ -236,7 +236,7 @@ struct Logger(Movable):
         self.sd = None
         if path.byte_length() > 0:
             var p = path.copy()
-            self.fd = Int(external_call["open64", Int32, num_fixed_args=2](p.as_c_string_span().ptr(), Int32(0o2101 | 0o2000000), Int32(0o644)))
+            self.fd = Int(external_call["openat", Int32, num_fixed_args=3](Int32(-100), p.as_c_string_span().ptr(), Int32(0o2101 | 0o2000000), Int32(0o644)))
             if self.fd < 0:
                 raise Error("cannot open " + path)
         if journal:
