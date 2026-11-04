@@ -1,0 +1,7 @@
+[project]
+name = "mojo-log"
+version = "0.1.0"
+description = "Structured logging for Mojo: levels, key=value fields, text and JSON-lines, stderr/file/journald sinks"
+license = "Apache-2.0"
+requires-python = ">=3.11,<3.15"
+dependencies = ["mojo>=1.2.0,<1.3"]
