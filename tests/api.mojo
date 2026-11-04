@@ -7,9 +7,8 @@ comptime NS = 1793772039123456789  # 2026-11-04T06:00:39.123456Z
 
 
 def fresh() raises:
-    var f = open(F, "w")
-    f.write("")
-    f.close()
+    with open(F, "w") as f:
+        f.write("")
 
 
 def test_filter_and_text() raises:
