@@ -48,7 +48,7 @@ API: [docs/api.md](docs/api.md). Design: [docs/design.md](docs/design.md). Numbe
 
 ## Checks
 
-`scripts/check.sh` (about 20 s, every command under a 4 GB cap): 3000 records in both formats
+`scripts/check.sh` (about 10 s, every command under a 4 GB cap): 3000 records in both formats
 byte-identical to the Python reference, every JSON line parses, a corrupted expectation is
 rejected, 0 allocations over 1M disabled and 1M enabled calls (control: a leaking loop moves the
 counter), 5 API tests, the README example, a record read back from journald.
