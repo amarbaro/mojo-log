@@ -5,7 +5,7 @@
 #             $CASES (default tests/cases.mojo) must print identical bytes; JSON lines must parse.
 #  2 control  the same compare on a one-byte-corrupted expectation must fail, or the gate is blind.
 #  3 alloc    LD_PRELOAD counter: 1M disabled calls and 1M enabled calls add zero allocations.
-#  4 api, journal (sent for real when libsystemd loads, read back with journalctl), doc examples.
+#  4 api, example (the README's), journal (sent for real when libsystemd loads, read back with journalctl), doc examples.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p .work/fx
@@ -39,6 +39,14 @@ a=$(allocs leaky 10); b=$(allocs leaky 100000)
 echo "alloc: 1M disabled and 1M enabled calls add 0 allocations (control: leaky $a -> $b)"
 cap $M run -I src tests/api.mojo >.work/api.log 2>&1 || { echo "FAIL api: tests/api.mojo"; cat .work/api.log; exit 1; }
 echo "api: $(grep -o 'Summary.*' .work/api.log | head -1)"
+cap $M run -I src examples/quickstart.mojo 2>.work/ex.out >/dev/null || { echo "FAIL example: examples/quickstart.mojo"; cat .work/ex.out; exit 1; }
+python3 -I - .work/ex.out <<'PY' || { echo "FAIL example: quickstart output is not the two records the README shows"; exit 1; }
+import json, sys
+a, b = [json.loads(l) for l in open(sys.argv[1])]
+assert a["level"] == "info" and a["msg"] == "request done" and list(a)[3:] == ["path", "ms", "n", "ok"] and a["ms"] == 12.5 and a["ok"] is True
+assert b["level"] == "error" and b["i"] == 2 and len(open(sys.argv[1]).readlines()) == 2
+PY
+echo "example: examples/quickstart.mojo prints the records the README shows"
 tok=t$$-$N; out=$(cap .work/journal "$tok") || { echo "FAIL journal: crashed"; exit 1; }
 if [[ $out == "journal: yes" ]]; then
   sleep 1; j=$(journalctl --since -2min -o cat "MLOG_TOKEN=$tok" 2>/dev/null | head -1)
