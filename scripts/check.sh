@@ -9,7 +9,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p .work/fx
-M=.venv/bin/mojo; N=${N:-3000}; O="python3 -I tools/oracle.py"
+M=${MOJO:-.venv/bin/mojo}; N=${N:-3000}; O="python3 -I tools/oracle.py"
 if systemd-run --user --scope -q true 2>/dev/null; then  # no user systemd (CI containers): run uncapped
   cap() { systemd-run --user --scope -q -p MemoryMax=4G -p MemorySwapMax=0 timeout 60 "$@"; }
 else cap() { timeout 60 "$@"; }; fi
