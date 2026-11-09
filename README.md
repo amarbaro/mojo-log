@@ -5,7 +5,8 @@
 <!-- /badges -->
 
 <!-- install -->
-Install: `pixi add mojo-log` once published. For now: `git clone https://github.com/amarbaro/mojo-log`, then `mojo run -I mojo-log/src app.mojo`.
+Install: `pixi workspace channel add https://conda.modular.com/max https://prefix.dev/amarbaro/amarbaro`, then `pixi add mojo-log` (import `mlog`). From source: `git clone https://github.com/amarbaro/mojo-log`, then `mojo run -I mojo-log/src app.mojo`.
+Toolchains: Mojo 1.2 stable, and the nightly 1.3.0.dev2026110805 in the weekly [mojo-libs](https://github.com/amarbaro/mojo-libs) matrix (36 libraries on stable, 35 on nightly).
 
 ```mojo
 from mlog import Logger, Field, INFO
@@ -48,6 +49,8 @@ API: [docs/api.md](docs/api.md). Design: [docs/design.md](docs/design.md). Numbe
 
 `scripts/bench.sh`, 1M records of 4 fields to `/dev/null`: JSON 841 to 929 ms against Python
 4865 to 5192 ms (about 5.6x), peak RSS 11 MB against 12 MB. Text 771 to 801 ms. 1M disabled calls: 3 to 4 ms.
+
+**Limits:** Linux, libc only. The journal sink needs libsystemd at run time; without it `has_journal()` is False and logging continues to the other sink.
 
 ## Checks
 
