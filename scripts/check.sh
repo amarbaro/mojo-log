@@ -29,7 +29,7 @@ echo "oracle: $N records x (json, text) byte-identical to Python, $got JSON line
 sed '1s/./X/' .work/fx/json.exp > .work/fx/bad.exp
 ! cmp -s .work/fx/json.out .work/fx/bad.exp || { echo "FAIL control: corrupted expectation still compared equal"; exit 1; }
 echo "control: corrupted expectation is rejected"
-allocs() { LD_PRELOAD=$PWD/.work/allocs.so cap .work/alloc "$@" 2>&1 >/dev/null | sed -n 's/^allocs //p'; }
+allocs() { LD_PRELOAD=$PWD/.work/allocs.so cap .work/alloc "$@" 2>&1 >/dev/null | sed -n 's/^allocs //p' | sort -n | tail -1; }  # a helper process (Ubuntu 26.04) prints its own line; keep the largest, the process under test
 for mode in disabled enabled; do
   a=$(allocs $mode 10); b=$(allocs $mode 1000000)
   [[ $a == "$b" ]] || { echo "FAIL alloc: $mode allocs $a at 10 calls, $b at 1000000"; exit 1; }
