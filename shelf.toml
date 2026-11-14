@@ -1,0 +1,4 @@
+name = "mojo-log"
+version = "0.1.1"
+description = "Structured logging for Mojo: levels, key=value fields, text and JSON-lines, stderr/file/journald sinks"
+tags = ["mojo", "logging"]
